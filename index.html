@@ -1,0 +1,1670 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shaik Nouhid — DevOps & Cloud Engineer</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Clash+Display:wght@400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <style>
+        :root {
+            /* AWS orange × Docker blue × K8s teal × Linux yellow */
+            --docker: #2496ed;
+            --k8s: #326ce5;
+            --aws: #ff9900;
+            --linux: #fcc624;
+            --python: #3776ab;
+            --term-green: #39ff14;
+            --bg: #04080f;
+            --bg2: #080f1a;
+            --bg3: #0c1525;
+            --text: #c8d8e8;
+            --muted: #4a6070;
+            --border: rgba(36, 150, 237, .15);
+            --font-mono: 'JetBrains Mono', monospace;
+            --font-disp: 'Clash Display', 'JetBrains Mono', monospace;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font-mono);
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* ── CURSOR ── */
+        #cur,
+        #cur-ring {
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: transform .08s linear;
+        }
+
+        #cur {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--docker);
+            mix-blend-mode: screen;
+        }
+
+        #cur-ring {
+            width: 34px;
+            height: 34px;
+            border: 1px solid rgba(36, 150, 237, .5);
+            border-radius: 50%;
+            transition: transform .18s ease, width .2s, height .2s, border-color .2s;
+        }
+
+        body.hovering #cur-ring {
+            width: 50px;
+            height: 50px;
+            border-color: var(--aws);
+        }
+
+        /* ── HEX GRID BG ── */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100'%3E%3Cpath d='M28 66L0 50V18L28 2l28 16v32z' fill='none' stroke='rgba(36,150,237,0.055)' stroke-width='1'/%3E%3Cpath d='M28 100L0 84V52l28-16 28 16v32z' fill='none' stroke='rgba(36,150,237,0.055)' stroke-width='1'/%3E%3C/svg%3E");
+            background-size: 56px 100px;
+        }
+
+        /* ── SCAN LINE OVERLAY ── */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, .08) 2px, rgba(0, 0, 0, .08) 4px);
+        }
+
+        /* ── FLOATING PARTICLES ── */
+        .particle {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0;
+            animation: drift linear infinite;
+        }
+
+        @keyframes drift {
+            0% {
+                transform: translateY(100vh) translateX(0) scale(1);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: .6;
+            }
+
+            90% {
+                opacity: .4;
+            }
+
+            100% {
+                transform: translateY(-10vh) translateX(40px) scale(.4);
+                opacity: 0;
+            }
+        }
+
+        /* ── NAV ── */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 3rem;
+            background: rgba(4, 8, 15, .88);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-logo {
+            font-family: var(--font-disp);
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+
+        .nav-logo .logo-badge {
+            background: linear-gradient(135deg, var(--docker), var(--k8s));
+            color: #fff;
+            font-size: .6rem;
+            font-weight: 700;
+            padding: .18rem .5rem;
+            border-radius: 4px;
+            letter-spacing: .08em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--muted);
+            font-size: .68rem;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            text-decoration: none;
+            transition: color .2s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--docker);
+        }
+
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            background: rgba(57, 255, 20, .07);
+            border: 1px solid rgba(57, 255, 20, .2);
+            border-radius: 20px;
+            padding: .3rem .9rem;
+            font-size: .65rem;
+            color: var(--term-green);
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--term-green);
+            box-shadow: 0 0 6px var(--term-green);
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: .3
+            }
+        }
+
+        /* ── HERO ── */
+        #hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 7rem 3rem 4rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1.1fr .9fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-eyebrow {
+            font-size: .65rem;
+            letter-spacing: .25em;
+            text-transform: uppercase;
+            color: var(--docker);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: .7rem;
+        }
+
+        .hero-eyebrow::before {
+            content: '';
+            width: 30px;
+            height: 1px;
+            background: var(--docker);
+        }
+
+        .hero-name {
+            font-family: var(--font-disp);
+            font-size: clamp(3rem, 5.5vw, 5rem);
+            font-weight: 700;
+            line-height: 1.05;
+            color: #fff;
+            margin-bottom: .6rem;
+        }
+
+        .hero-name .stroke {
+            -webkit-text-stroke: 1.5px var(--docker);
+            color: transparent;
+        }
+
+        .hero-sub {
+            font-size: .9rem;
+            color: var(--muted);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            max-width: 480px;
+        }
+
+        .hero-sub strong {
+            color: var(--aws);
+            font-weight: 600;
+        }
+
+        .hero-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .6rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .hbadge {
+            padding: .3rem .9rem;
+            border-radius: 4px;
+            font-size: .68rem;
+            font-weight: 600;
+            border: 1px solid;
+            letter-spacing: .06em;
+        }
+
+        .hbadge.docker {
+            color: var(--docker);
+            border-color: rgba(36, 150, 237, .35);
+            background: rgba(36, 150, 237, .07);
+        }
+
+        .hbadge.k8s {
+            color: #7aaff7;
+            border-color: rgba(50, 108, 229, .35);
+            background: rgba(50, 108, 229, .07);
+        }
+
+        .hbadge.aws {
+            color: var(--aws);
+            border-color: rgba(255, 153, 0, .35);
+            background: rgba(255, 153, 0, .07);
+        }
+
+        .hbadge.linux {
+            color: var(--linux);
+            border-color: rgba(252, 198, 36, .35);
+            background: rgba(252, 198, 36, .07);
+        }
+
+        .hbadge.python {
+            color: #6ba3d4;
+            border-color: rgba(55, 118, 171, .35);
+            background: rgba(55, 118, 171, .07);
+        }
+
+        .hbadge.storage {
+            color: #a78bfa;
+            border-color: rgba(167, 139, 250, .35);
+            background: rgba(167, 139, 250, .07);
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: .72rem 1.7rem;
+            border-radius: 6px;
+            font-family: var(--font-mono);
+            font-size: .75rem;
+            font-weight: 600;
+            letter-spacing: .07em;
+            text-decoration: none;
+            cursor: none;
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            transition: all .22s;
+        }
+
+        .btn-primary {
+            background: var(--docker);
+            color: #fff;
+            box-shadow: 0 0 28px rgba(36, 150, 237, .4);
+        }
+
+        .btn-primary:hover {
+            background: #1a7fc1;
+            box-shadow: 0 0 44px rgba(36, 150, 237, .55);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            border: 1px solid var(--border);
+            color: var(--text);
+            background: transparent;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--docker);
+            color: var(--docker);
+            transform: translateY(-2px);
+        }
+
+        /* TERMINAL */
+        .terminal {
+            background: var(--bg2);
+            border: 1px solid rgba(36, 150, 237, .22);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 60px rgba(36, 150, 237, .12), inset 0 1px 0 rgba(255, 255, 255, .04);
+            animation: floatY 5s ease-in-out infinite;
+            position: relative;
+        }
+
+        @keyframes floatY {
+
+            0%,
+            100% {
+                transform: translateY(0)
+            }
+
+            50% {
+                transform: translateY(-12px)
+            }
+        }
+
+        .term-bar {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            padding: .7rem 1rem;
+            background: var(--bg3);
+            border-bottom: 1px solid rgba(36, 150, 237, .15);
+        }
+
+        .td {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .td-r {
+            background: #ff5f57
+        }
+
+        .td-y {
+            background: #febc2e
+        }
+
+        .td-g {
+            background: #28c840
+        }
+
+        .term-title {
+            font-size: .65rem;
+            color: var(--muted);
+            margin-left: .4rem;
+        }
+
+        .term-body {
+            padding: 1.4rem 1.6rem;
+            font-size: .74rem;
+            line-height: 2.1;
+        }
+
+        .tp {
+            color: var(--term-green);
+        }
+
+        .tc {
+            color: var(--docker);
+        }
+
+        .tk {
+            color: #a78bfa;
+        }
+
+        .tv {
+            color: #6ee7b7;
+        }
+
+        .ts {
+            color: #fcd34d;
+        }
+
+        .tm {
+            color: var(--muted);
+        }
+
+        .cursor-blink {
+            animation: blink .9s step-end infinite;
+            color: var(--term-green);
+        }
+
+        /* ── SECTION COMMON ── */
+        .sec {
+            padding: 6rem 3rem;
+            max-width: 1100px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .sec-label {
+            font-size: .62rem;
+            letter-spacing: .25em;
+            text-transform: uppercase;
+            color: var(--docker);
+            margin-bottom: .5rem;
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+
+        .sec-label::before {
+            content: '//';
+            color: var(--muted);
+        }
+
+        .sec-title {
+            font-family: var(--font-disp);
+            font-size: clamp(1.8rem, 3vw, 2.8rem);
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 3rem;
+        }
+
+        .sec-title em {
+            font-style: normal;
+            color: var(--docker);
+        }
+
+        .hr {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+        }
+
+        /* ── ABOUT ── */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        .about-text {
+            font-size: .82rem;
+            line-height: 2;
+            color: var(--text);
+        }
+
+        .about-text p+p {
+            margin-top: 1rem;
+        }
+
+        .about-text strong {
+            color: var(--aws);
+        }
+
+        .info-list {
+            display: flex;
+            flex-direction: column;
+            gap: .8rem;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: .9rem 1.2rem;
+            font-size: .76rem;
+            transition: border-color .2s;
+        }
+
+        .info-row:hover {
+            border-color: rgba(36, 150, 237, .4);
+        }
+
+        .info-row .ir-icon {
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .ir-label {
+            font-size: .6rem;
+            text-transform: uppercase;
+            letter-spacing: .12em;
+            color: var(--muted);
+        }
+
+        .ir-val {
+            color: var(--text);
+        }
+
+        /* ── SKILLS ── */
+        .skills-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+        }
+
+        .skill-group-title {
+            font-size: .65rem;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+        }
+
+        .skill-group-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .skill-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .9rem;
+        }
+
+        .sk-card {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: .75rem 1.2rem;
+            font-size: .76rem;
+            transition: all .22s;
+            cursor: none;
+        }
+
+        .sk-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .sk-card.docker-c {
+            border-color: rgba(36, 150, 237, .3);
+        }
+
+        .sk-card.docker-c:hover {
+            background: rgba(36, 150, 237, .08);
+            box-shadow: 0 8px 24px rgba(36, 150, 237, .12);
+        }
+
+        .sk-card.k8s-c {
+            border-color: rgba(50, 108, 229, .3);
+        }
+
+        .sk-card.k8s-c:hover {
+            background: rgba(50, 108, 229, .08);
+            box-shadow: 0 8px 24px rgba(50, 108, 229, .12);
+        }
+
+        .sk-card.aws-c {
+            border-color: rgba(255, 153, 0, .3);
+        }
+
+        .sk-card.aws-c:hover {
+            background: rgba(255, 153, 0, .08);
+            box-shadow: 0 8px 24px rgba(255, 153, 0, .12);
+        }
+
+        .sk-card.linux-c {
+            border-color: rgba(252, 198, 36, .3);
+        }
+
+        .sk-card.linux-c:hover {
+            background: rgba(252, 198, 36, .08);
+            box-shadow: 0 8px 24px rgba(252, 198, 36, .12);
+        }
+
+        .sk-card.python-c {
+            border-color: rgba(55, 118, 171, .3);
+        }
+
+        .sk-card.python-c:hover {
+            background: rgba(55, 118, 171, .08);
+            box-shadow: 0 8px 24px rgba(55, 118, 171, .12);
+        }
+
+        .sk-card.storage-c {
+            border-color: rgba(167, 139, 250, .3);
+        }
+
+        .sk-card.storage-c:hover {
+            background: rgba(167, 139, 250, .08);
+            box-shadow: 0 8px 24px rgba(167, 139, 250, .12);
+        }
+
+        .sk-icon {
+            font-size: 1.3rem;
+        }
+
+        .sk-name {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .sk-level {
+            font-size: .62rem;
+            color: var(--muted);
+        }
+
+        /* SKILL BARS */
+        .skill-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .sb-row {
+            display: flex;
+            flex-direction: column;
+            gap: .4rem;
+        }
+
+        .sb-top {
+            display: flex;
+            justify-content: space-between;
+            font-size: .72rem;
+        }
+
+        .sb-label {
+            color: var(--text);
+        }
+
+        .sb-pct {
+            color: var(--muted);
+        }
+
+        .sb-track {
+            height: 4px;
+            background: rgba(255, 255, 255, .06);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .sb-fill {
+            height: 100%;
+            border-radius: 2px;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 1.2s cubic-bezier(.22, 1, .36, 1);
+        }
+
+        .sb-fill.visible {
+            transform: scaleX(1);
+        }
+
+        .sb-docker {
+            background: linear-gradient(90deg, var(--docker), #5bb8ff);
+            width: 82%;
+        }
+
+        .sb-k8s {
+            background: linear-gradient(90deg, var(--k8s), #7aaff7);
+            width: 72%;
+        }
+
+        .sb-aws {
+            background: linear-gradient(90deg, var(--aws), #ffcc66);
+            width: 68%;
+        }
+
+        .sb-linux {
+            background: linear-gradient(90deg, var(--linux), #ffe77a);
+            width: 85%;
+        }
+
+        .sb-python {
+            background: linear-gradient(90deg, var(--python), #6ba3d4);
+            width: 78%;
+        }
+
+        .sb-storage {
+            background: linear-gradient(90deg, #a78bfa, #c4b5fd);
+            width: 65%;
+        }
+
+        /* ── ROADMAP ── */
+        .roadmap-cols {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1.4rem;
+        }
+
+        .rm-col {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.6rem;
+            transition: border-color .2s;
+        }
+
+        .rm-col.active-col {
+            border-color: rgba(36, 150, 237, .45);
+            box-shadow: 0 0 40px rgba(36, 150, 237, .1);
+        }
+
+        .rm-head {
+            font-size: .62rem;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            padding-bottom: .9rem;
+            margin-bottom: .9rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .rm-head.done-h {
+            color: #22c55e;
+        }
+
+        .rm-head.now-h {
+            color: var(--docker);
+        }
+
+        .rm-head.next-h {
+            color: #a78bfa;
+        }
+
+        .rm-item {
+            display: flex;
+            align-items: center;
+            gap: .7rem;
+            padding: .45rem 0;
+            font-size: .76rem;
+        }
+
+        .rmi-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .rmi-dot.d {
+            background: #22c55e;
+        }
+
+        .rmi-dot.n {
+            background: var(--docker);
+            box-shadow: 0 0 6px var(--docker);
+        }
+
+        .rmi-dot.x {
+            background: #a78bfa;
+        }
+
+        /* ── STATS ── */
+        .stats-nums {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .sn-box {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.4rem;
+            text-align: center;
+            transition: all .2s;
+        }
+
+        .sn-box:hover {
+            border-color: rgba(36, 150, 237, .4);
+            transform: translateY(-3px);
+        }
+
+        .sn-num {
+            font-family: var(--font-disp);
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--docker), var(--aws));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sn-label {
+            font-size: .62rem;
+            color: var(--muted);
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            margin-top: .3rem;
+        }
+
+        .gh-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .gh-grid img {
+            width: 100%;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        /* ── CONTACT ── */
+        .contact-wrap {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        .contact-blurb {
+            font-size: .8rem;
+            line-height: 1.9;
+            color: var(--muted);
+            margin-bottom: 1.8rem;
+        }
+
+        .contact-links {
+            display: flex;
+            flex-direction: column;
+            gap: .8rem;
+        }
+
+        .cl-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: .9rem 1.3rem;
+            border-radius: 8px;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            text-decoration: none;
+            transition: all .22s;
+            color: var(--text);
+        }
+
+        .cl-item:hover {
+            border-color: rgba(36, 150, 237, .4);
+            color: var(--docker);
+            transform: translateX(6px);
+        }
+
+        .cl-icon {
+            font-size: 1.1rem;
+        }
+
+        .cl-meta {
+            display: flex;
+            flex-direction: column;
+            gap: .1rem;
+        }
+
+        .cl-lbl {
+            font-size: .58rem;
+            text-transform: uppercase;
+            letter-spacing: .12em;
+            color: var(--muted);
+        }
+
+        .cl-val {
+            font-size: .78rem;
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: .9rem;
+        }
+
+        .cf-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: .9rem;
+        }
+
+        .cf-group {
+            display: flex;
+            flex-direction: column;
+            gap: .35rem;
+        }
+
+        .cf-label {
+            font-size: .6rem;
+            text-transform: uppercase;
+            letter-spacing: .12em;
+            color: var(--muted);
+        }
+
+        .cf-input,
+        .cf-textarea {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: .72rem 1rem;
+            color: var(--text);
+            font-family: var(--font-mono);
+            font-size: .76rem;
+            outline: none;
+            transition: border-color .2s;
+            resize: none;
+        }
+
+        .cf-input:focus,
+        .cf-textarea:focus {
+            border-color: rgba(36, 150, 237, .5);
+        }
+
+        .cf-textarea {
+            min-height: 110px;
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            text-align: center;
+            padding: 2rem 3rem;
+            border-top: 1px solid var(--border);
+            font-size: .7rem;
+            color: var(--muted);
+            position: relative;
+            z-index: 1;
+        }
+
+        footer span {
+            color: var(--docker);
+        }
+
+        .footer-badges {
+            display: flex;
+            justify-content: center;
+            gap: .6rem;
+            margin-bottom: .8rem;
+            flex-wrap: wrap;
+        }
+
+        .fbadge {
+            padding: .22rem .7rem;
+            border-radius: 20px;
+            font-size: .6rem;
+            border: 1px solid;
+            letter-spacing: .05em;
+        }
+
+        /* ── REVEAL ── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity .65s ease, transform .65s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── GLOW ORBS ── */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: .1;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .orb1 {
+            width: 600px;
+            height: 600px;
+            background: var(--docker);
+            top: -200px;
+            left: -150px;
+        }
+
+        .orb2 {
+            width: 400px;
+            height: 400px;
+            background: var(--aws);
+            bottom: 100px;
+            right: -100px;
+            animation: orbMove 8s ease-in-out infinite alternate;
+        }
+
+        .orb3 {
+            width: 300px;
+            height: 300px;
+            background: #a78bfa;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: .05;
+        }
+
+        @keyframes orbMove {
+            0% {
+                transform: translateY(0)
+            }
+
+            100% {
+                transform: translateY(-60px)
+            }
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width:768px) {
+            nav {
+                padding: .9rem 1.4rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .sec {
+                padding: 4rem 1.4rem;
+            }
+
+            #hero {
+                padding: 5.5rem 1.4rem 3rem;
+            }
+
+            .hero-wrap,
+            .about-grid,
+            .contact-wrap {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .terminal {
+                display: none;
+            }
+
+            .roadmap-cols {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-nums {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .gh-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cf-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- CURSORS -->
+    <div id="cur"></div>
+    <div id="cur-ring"></div>
+
+    <!-- ORBS -->
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+
+    <!-- PARTICLES (injected by JS) -->
+
+    <!-- ══════════════ NAV ══════════════ -->
+    <nav>
+        <div class="nav-logo">
+            <span class="logo-badge">DevOps</span>
+            Shaik Nouhid
+        </div>
+        <ul class="nav-links">
+            <li><a href="#hero">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#roadmap">Roadmap</a></li>
+            <li><a href="#stats">Stats</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <div class="status-pill">
+            <div class="status-dot"></div>
+            Open to Work
+        </div>
+    </nav>
+
+    <!-- ══════════════ HERO ══════════════ -->
+    <section id="hero" style="padding:7rem 3rem 4rem;max-width:1100px;margin:0 auto;position:relative;z-index:1;">
+        <div class="hero-wrap">
+            <div>
+                <div class="hero-eyebrow">DevOps &amp; Cloud Engineer · Bengaluru, India</div>
+                <h1 class="hero-name">Shaik<br /><span class="stroke">Nouhid</span></h1>
+                <p class="hero-sub">
+                    Building and automating <strong>cloud-native infrastructure</strong> with Docker, Kubernetes &amp;
+                    AWS.
+                    Passionate about Linux, storage systems, and shipping reliable systems that just work.
+                </p>
+                <div class="hero-badges">
+                    <span class="hbadge docker">🐳 Docker</span>
+                    <span class="hbadge k8s">☸️ Kubernetes</span>
+                    <span class="hbadge aws">☁️ AWS</span>
+                    <span class="hbadge linux">🐧 Linux</span>
+                    <span class="hbadge python">🐍 Python</span>
+                    <span class="hbadge storage">🗄️ Storage</span>
+                </div>
+                <div class="hero-btns">
+                    <a href="mailto:nouhid10@gmail.com" class="btn btn-primary">📧 Say Hello</a>
+                    <a href="https://github.com/Nouhid" target="_blank" class="btn btn-outline">⭐ GitHub</a>
+                    <a href="https://www.linkedin.com/in/shaik-nouhid-0288202a0/" target="_blank"
+                        class="btn btn-outline">💼 LinkedIn</a>
+                </div>
+            </div>
+
+            <!-- TERMINAL CARD -->
+            <div class="terminal">
+                <div class="term-bar">
+                    <div class="td td-r"></div>
+                    <div class="td td-y"></div>
+                    <div class="td td-g"></div>
+                    <span class="term-title">nouhid@devops:~$</span>
+                </div>
+                <div class="term-body">
+                    <div><span class="tp">❯</span> <span class="tc">kubectl</span> get node nouhid</div>
+                    <div><span class="tm">NAME STATUS ROLES AGE</span></div>
+                    <div><span class="tv">nouhid Ready worker 1y</span></div>
+                    <br />
+                    <div><span class="tp">❯</span> <span class="tc">docker</span> inspect nouhid</div>
+                    <div><span class="tk">"Name"</span>: <span class="ts">"Shaik Nouhid"</span></div>
+                    <div><span class="tk">"Role"</span>: <span class="ts">"DevOps Engineer"</span></div>
+                    <div><span class="tk">"Location"</span>: <span class="ts">"Bengaluru, IN 🇮🇳"</span></div>
+                    <div><span class="tk">"Stack"</span>: [<span class="ts">"Docker"</span>, <span
+                            class="ts">"K8s"</span>, <span class="ts">"AWS"</span>]</div>
+                    <div><span class="tk">"Status"</span>: <span class="tv">"🟢 open_to_work"</span></div>
+                    <br />
+                    <div><span class="tp">❯</span> <span class="tc">aws</span> s3 cp passion.sh .<span
+                            class="cursor-blink"> █</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="hr"></div>
+
+    <!-- ══════════════ ABOUT ══════════════ -->
+    <div class="sec" id="about">
+        <div class="sec-label">who i am</div>
+        <h2 class="sec-title">About <em>Me</em></h2>
+        <div class="about-grid reveal">
+            <div class="about-text">
+                <p>
+                    Hey! I'm <strong>Shaik Nouhid</strong>, a DevOps &amp; Cloud Engineer based in Bengaluru, India.
+                    I'm deeply passionate about containers, cloud infrastructure, and the art of automating everything
+                    that can be automated.
+                </p>
+                <p>
+                    My journey is rooted in <strong>Linux</strong> — where I learned that understanding the system at
+                    its core makes you a better engineer everywhere else. From there it was Docker, Kubernetes, AWS, and
+                    a growing obsession with <strong>storage architecture</strong>.
+                </p>
+                <p>
+                    I believe great infrastructure is <strong>invisible</strong> — it just works, scales silently, and
+                    never wakes anyone up at 3am. That's what I'm building toward, one <code
+                        style="color:var(--docker);">kubectl apply</code> at a time.
+                </p>
+                <p>
+                    Currently levelling up in <strong>advanced Kubernetes internals</strong>, AWS cloud services, and
+                    exploring distributed storage systems — always building, always learning.
+                </p>
+            </div>
+            <div class="info-list">
+                <div class="info-row">
+                    <span class="ir-icon">👤</span>
+                    <div>
+                        <div class="ir-label">Full Name</div>
+                        <div class="ir-val">Shaik Nouhid</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <span class="ir-icon">💼</span>
+                    <div>
+                        <div class="ir-label">Role</div>
+                        <div class="ir-val">DevOps &amp; Cloud Engineer</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <span class="ir-icon">📍</span>
+                    <div>
+                        <div class="ir-label">Location</div>
+                        <div class="ir-val">Bengaluru, India 🇮🇳</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <span class="ir-icon">📧</span>
+                    <div>
+                        <div class="ir-label">Email</div>
+                        <div class="ir-val">nouhid10@gmail.com</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <span class="ir-icon">🟢</span>
+                    <div>
+                        <div class="ir-label">Availability</div>
+                        <div class="ir-val" style="color:var(--term-green);">Open to Opportunities</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <span class="ir-icon">⚡</span>
+                    <div>
+                        <div class="ir-label">Currently Building</div>
+                        <div class="ir-val">K8s + AWS + Storage Skills</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <!-- ══════════════ SKILLS ══════════════ -->
+    <div class="sec" id="skills">
+        <div class="sec-label">expertise</div>
+        <h2 class="sec-title">Tech <em>Stack</em></h2>
+
+        <div class="skills-wrap reveal">
+            <div>
+                <div class="skill-group-title">☁️ Cloud & Container Orchestration</div>
+                <div class="skill-cards">
+                    <div class="sk-card docker-c"><span class="sk-icon">🐳</span>
+                        <div>
+                            <div class="sk-name">Docker</div>
+                            <div class="sk-level">Containerisation</div>
+                        </div>
+                    </div>
+                    <div class="sk-card k8s-c"><span class="sk-icon">☸️</span>
+                        <div>
+                            <div class="sk-name">Kubernetes</div>
+                            <div class="sk-level">Orchestration</div>
+                        </div>
+                    </div>
+                    <div class="sk-card aws-c"><span class="sk-icon">☁️</span>
+                        <div>
+                            <div class="sk-name">AWS</div>
+                            <div class="sk-level">Cloud Platform</div>
+                        </div>
+                    </div>
+                    <div class="sk-card linux-c"><span class="sk-icon">🐧</span>
+                        <div>
+                            <div class="sk-name">Linux</div>
+                            <div class="sk-level">Systems & Admin</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="skill-group-title">🛠️ Languages & Scripting</div>
+                <div class="skill-cards">
+                    <div class="sk-card python-c"><span class="sk-icon">🐍</span>
+                        <div>
+                            <div class="sk-name">Python</div>
+                            <div class="sk-level">Automation & Scripting</div>
+                        </div>
+                    </div>
+                    <div class="sk-card linux-c"><span class="sk-icon">💻</span>
+                        <div>
+                            <div class="sk-name">Bash</div>
+                            <div class="sk-level">Shell Scripting</div>
+                        </div>
+                    </div>
+                    <div class="sk-card k8s-c"><span class="sk-icon">📄</span>
+                        <div>
+                            <div class="sk-name">YAML</div>
+                            <div class="sk-level">Config & Manifests</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="skill-group-title">🗄️ Storage & Version Control</div>
+                <div class="skill-cards">
+                    <div class="sk-card storage-c"><span class="sk-icon">🗄️</span>
+                        <div>
+                            <div class="sk-name">Storage Systems</div>
+                            <div class="sk-level">Block · Object · File</div>
+                        </div>
+                    </div>
+                    <div class="sk-card docker-c"><span class="sk-icon">🔧</span>
+                        <div>
+                            <div class="sk-name">Git</div>
+                            <div class="sk-level">Version Control</div>
+                        </div>
+                    </div>
+                    <div class="sk-card linux-c"><span class="sk-icon">⭐</span>
+                        <div>
+                            <div class="sk-name">GitHub</div>
+                            <div class="sk-level">Collaboration</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SKILL BARS -->
+            <div>
+                <div class="skill-group-title">📊 Proficiency Overview</div>
+                <div class="skill-bars">
+                    <div class="sb-row">
+                        <div class="sb-top"><span class="sb-label">🐧 Linux</span><span class="sb-pct">85%</span></div>
+                        <div class="sb-track">
+                            <div class="sb-fill sb-linux"></div>
+                        </div>
+                    </div>
+                    <div class="sb-row">
+                        <div class="sb-top"><span class="sb-label">🐳 Docker</span><span class="sb-pct">82%</span></div>
+                        <div class="sb-track">
+                            <div class="sb-fill sb-docker"></div>
+                        </div>
+                    </div>
+                    <div class="sb-row">
+                        <div class="sb-top"><span class="sb-label">🐍 Python</span><span class="sb-pct">78%</span></div>
+                        <div class="sb-track">
+                            <div class="sb-fill sb-python"></div>
+                        </div>
+                    </div>
+                    <div class="sb-row">
+                        <div class="sb-top"><span class="sb-label">☸️ Kubernetes</span><span class="sb-pct">72%</span>
+                        </div>
+                        <div class="sb-track">
+                            <div class="sb-fill sb-k8s"></div>
+                        </div>
+                    </div>
+                    <div class="sb-row">
+                        <div class="sb-top"><span class="sb-label">☁️ AWS</span><span class="sb-pct">68%</span></div>
+                        <div class="sb-track">
+                            <div class="sb-fill sb-aws"></div>
+                        </div>
+                    </div>
+                    <div class="sb-row">
+                        <div class="sb-top"><span class="sb-label">🗄️ Storage Systems</span><span
+                                class="sb-pct">65%</span></div>
+                        <div class="sb-track">
+                            <div class="sb-fill sb-storage"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <!-- ══════════════ ROADMAP ══════════════ -->
+    <div class="sec" id="roadmap">
+        <div class="sec-label">journey</div>
+        <h2 class="sec-title">Learning <em>Roadmap</em></h2>
+        <div class="roadmap-cols reveal">
+            <div class="rm-col">
+                <div class="rm-head done-h">✅ Completed</div>
+                <div class="rm-item">
+                    <div class="rmi-dot d"></div>Python Programming
+                </div>
+                <div class="rm-item">
+                    <div class="rmi-dot d"></div>Docker Containers
+                </div>
+                <div class="rm-item">
+                    <div class="rmi-dot d"></div>Linux Administration
+                </div>
+                <div class="rm-item">
+                    <div class="rmi-dot d"></div>Git &amp; GitHub
+                </div>
+                <div class="rm-item">
+                    <div class="rmi-dot d"></div>Bash Scripting
+                </div>
+                <div class="rm-item">
+                    <div class="rmi-dot d"></div>Data Engineering Basics
+                </div>
+            </div>
+            <div class="rm-col active-col">
+                <div class="rm-head now-h">🔥 Right Now</div>
+                <div class="rm-item">
+                    <div class="rmi-dot n"></div>Kubernetes Advanced
+                </div>
+                <div class="rm-item">
+                    <div class="rmi-dot n"></div>AWS Cloud Services
+                </div>
+                <div class="rm-item">
+                    <div class="rmi-dot n"></div>Storage Architecture
+                </div>
+                <div class="rm-item">
+                    <div class="rmi-dot n"></div>Cloud Infrastructure Design
+                </div>
+                <div class="rm-item">
+                    <div class="rmi-dot n"></div>YAML &amp; Helm Basics
+                </div>
+            </div>
+            <div class="rm-col">
+                <div class="rm-head next-h">🎯 Up Next</div>
+                <div class="rm-item">
+                    <div class="rmi-dot x"></div>Terraform / IaC
+                </div>
+                <div class="rm-item">
+                    <div class="rmi-dot x"></div>Helm Charts
+                </div>
+                <div class="rm-item">
+                    <div class="rmi-dot x"></div>CI/CD Pipelines
+                </div>
+                <div class="rm-item">
+                    <div class="rmi-dot x"></div>OpenShift
+                </div>
+                <div class="rm-item">
+                    <div class="rmi-dot x"></div>AWS Certifications
+                </div>
+                <div class="rm-item">
+                    <div class="rmi-dot x"></div>Distributed Storage (Ceph)
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <!-- ══════════════ STATS ══════════════ -->
+    <div class="sec" id="stats">
+        <div class="sec-label">github</div>
+        <h2 class="sec-title">GitHub <em>Stats</em></h2>
+        <div class="stats-nums reveal">
+            <div class="sn-box">
+                <div class="sn-num">4</div>
+                <div class="sn-label">Repositories</div>
+            </div>
+            <div class="sn-box">
+                <div class="sn-num">5+</div>
+                <div class="sn-label">Technologies</div>
+            </div>
+            <div class="sn-box">
+                <div class="sn-num">∞</div>
+                <div class="sn-label">Commits to Learn</div>
+            </div>
+            <div class="sn-box">
+                <div class="sn-num">🟢</div>
+                <div class="sn-label">Open to Work</div>
+            </div>
+        </div>
+        <div class="gh-grid reveal">
+            <img src="https://github-readme-stats.vercel.app/api?username=Nouhid&show_icons=true&theme=dark&bg_color=080f1a&border_color=2496ed&icon_color=2496ed&title_color=2496ed&text_color=8b949e&include_all_commits=true&count_private=true"
+                alt="GitHub Stats" />
+            <img src="https://streak-stats.demolab.com?user=Nouhid&theme=dark&background=080f1a&border=2496ed&ring=2496ed&fire=ff9900&currStreakLabel=2496ed&sideLabels=637587&dates=637587"
+                alt="GitHub Streak" />
+            <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=Nouhid&layout=compact&theme=dark&bg_color=080f1a&border_color=2496ed&title_color=2496ed&text_color=8b949e"
+                alt="Top Languages" />
+            <img src="https://github-profile-trophy.vercel.app/?username=Nouhid&theme=darkhub&no-frame=true&no-bg=true&margin-w=4&column=4"
+                alt="Trophies" />
+        </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <!-- ══════════════ CONTACT ══════════════ -->
+    <div class="sec" id="contact">
+        <div class="sec-label">get in touch</div>
+        <h2 class="sec-title">Let's <em>Connect</em></h2>
+        <div class="contact-wrap reveal">
+            <div>
+                <p class="contact-blurb">
+                    I'm actively looking for DevOps and Cloud Engineering opportunities — full-time roles, internships,
+                    collaborations, or open source projects. If you want to build something together or just say hi, I'm
+                    always up for it.
+                </p>
+                <div class="contact-links">
+                    <a href="mailto:nouhid10@gmail.com" class="cl-item">
+                        <span class="cl-icon">📧</span>
+                        <div class="cl-meta">
+                            <div class="cl-lbl">Email</div>
+                            <div class="cl-val">nouhid10@gmail.com</div>
+                        </div>
+                    </a>
+                    <a href="https://github.com/Nouhid" target="_blank" class="cl-item">
+                        <span class="cl-icon">⭐</span>
+                        <div class="cl-meta">
+                            <div class="cl-lbl">GitHub</div>
+                            <div class="cl-val">github.com/Nouhid</div>
+                        </div>
+                    </a>
+                    <a href="https://www.linkedin.com/in/shaik-nouhid-0288202a0/" target="_blank" class="cl-item">
+                        <span class="cl-icon">💼</span>
+                        <div class="cl-meta">
+                            <div class="cl-lbl">LinkedIn</div>
+                            <div class="cl-val">Shaik Nouhid</div>
+                        </div>
+                    </a>
+                    <div class="cl-item" style="cursor:default;">
+                        <span class="cl-icon">📍</span>
+                        <div class="cl-meta">
+                            <div class="cl-lbl">Location</div>
+                            <div class="cl-val">Bengaluru, India 🇮🇳</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="contact-form">
+                <div class="cf-row">
+                    <div class="cf-group"><label class="cf-label">Name</label><input type="text" class="cf-input"
+                            placeholder="Your name" /></div>
+                    <div class="cf-group"><label class="cf-label">Email</label><input type="email" class="cf-input"
+                            placeholder="your@email.com" /></div>
+                </div>
+                <div class="cf-group"><label class="cf-label">Subject</label><input type="text" class="cf-input"
+                        placeholder="What's this about?" /></div>
+                <div class="cf-group"><label class="cf-label">Message</label><textarea class="cf-textarea"
+                        placeholder="Tell me more..."></textarea></div>
+                <a href="mailto:nouhid10@gmail.com" class="btn btn-primary" style="justify-content:center;">📨 Send
+                    Message</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════ FOOTER ══════════════ -->
+    <footer>
+        <div class="footer-badges">
+            <span class="fbadge" style="color:var(--docker);border-color:rgba(36,150,237,.3);">🐳 Docker</span>
+            <span class="fbadge" style="color:#7aaff7;border-color:rgba(50,108,229,.3);">☸️ Kubernetes</span>
+            <span class="fbadge" style="color:var(--aws);border-color:rgba(255,153,0,.3);">☁️ AWS</span>
+            <span class="fbadge" style="color:var(--linux);border-color:rgba(252,198,36,.3);">🐧 Linux</span>
+            <span class="fbadge" style="color:#6ba3d4;border-color:rgba(55,118,171,.3);">🐍 Python</span>
+            <span class="fbadge" style="color:#a78bfa;border-color:rgba(167,139,250,.3);">🗄️ Storage</span>
+        </div>
+        <p>Crafted with 💙 by <span>Shaik Nouhid</span> · Bengaluru, India</p>
+        <p style="margin-top:.4rem;">containers: running ✅ &nbsp;|&nbsp; clusters: healthy ✅ &nbsp;|&nbsp; chai: brewing
+            ☕</p>
+    </footer>
+
+    <script>
+        // ── Cursor
+        const cur = document.getElementById('cur');
+        const ring = document.getElementById('cur-ring');
+        document.addEventListener('mousemove', e => {
+            cur.style.transform = `translate(${e.clientX - 5}px, ${e.clientY - 5}px)`;
+            ring.style.transform = `translate(${e.clientX - 17}px, ${e.clientY - 17}px)`;
+        });
+        document.querySelectorAll('a,button,.sk-card,.sn-box,.rm-col').forEach(el => {
+            el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+            el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+        });
+
+        // ── Particles
+        const colors = ['#2496ed', '#ff9900', '#326ce5', '#fcc624', '#3776ab', '#a78bfa'];
+        for (let i = 0; i < 22; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            const sz = Math.random() * 4 + 2;
+            p.style.cssText = `
+    width:${sz}px; height:${sz}px;
+    background:${colors[Math.floor(Math.random() * colors.length)]};
+    left:${Math.random() * 100}vw;
+    animation-duration:${Math.random() * 18 + 10}s;
+    animation-delay:${Math.random() * 10}s;
+    opacity:0;
+  `;
+            document.body.appendChild(p);
+        }
+
+        // ── Reveal on scroll
+        const obs = new IntersectionObserver(entries => {
+            entries.forEach((e, i) => {
+                if (e.isIntersecting) {
+                    setTimeout(() => e.target.classList.add('visible'), i * 70);
+                    // animate skill bars
+                    e.target.querySelectorAll('.sb-fill').forEach(b => b.classList.add('visible'));
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+        // ── Active nav
+        const secs = document.querySelectorAll('section[id], div.sec[id]');
+        const links = document.querySelectorAll('.nav-links a');
+        window.addEventListener('scroll', () => {
+            let cur2 = '';
+            secs.forEach(s => { if (window.scrollY >= s.offsetTop - 140) cur2 = s.id; });
+            links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + cur2));
+        });
+    </script>
+</body>
+
+</html>
